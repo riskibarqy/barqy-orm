@@ -1,0 +1,36 @@
+# .golangci.yml
+linters:
+  enable:
+    - errcheck    # Checks if errors are checked (important for your code)
+    - staticcheck # Enforces more static analysis checks
+    - misspell    # Checks for common spelling errors
+    - gofmt       # Ensures Go code is formatted according to `gofmt`
+    - govet       # Finds suspicious constructs (e.g., unreachable code, misuse of built-in functions)
+    - goconst     # Identifies duplicated constant values
+    - gocyclo     # Identifies functions with high cyclomatic complexity
+    - unparam     # Identifies unused function parameters
+    - dupl        # Identifies duplicate code
+    - whitespace  # To enforce whitespace rules
+    - ineffassign
+    
+  errcheck:
+    exclude-functions: fmt.Errorf  # Ignore error handling for fmt.Errorf (common pattern in Go)
+  gofmt:
+    simplify: true  # Automatically fix the Go formatting issues with `gofmt`
+
+# Go version used for linting (you can adjust it to match your Go version)
+go:
+  version: 1.23
+
+# Enable linters to automatically fix code
+fix: true
+
+# Run linters only for Go files
+run:
+  # You can configure whether or not to lint specific directories or files
+  # This example runs the linter on all Go files in the repository
+  include:
+    - '**/*.go'
+  exclude:
+    - 'vendor/**'  # Exclude vendor directory (optional)
+  tests: true

@@ -3,11 +3,6 @@ package sql
 import (
 	"database/sql"
 	"fmt"
-
-	_ "github.com/denisenkom/go-mssqldb" // SQL Server driver
-	_ "github.com/go-sql-driver/mysql"   // MySQL driver (example)
-	_ "github.com/lib/pq"                // PostgreSQL driver
-	_ "github.com/mattn/go-sqlite3"      // SQLite driver
 )
 
 var db *sql.DB
@@ -15,9 +10,17 @@ var db *sql.DB
 // Connect initializes the DB connection based on the driver name and DSN.
 func Connect(driverName, dsn string) error {
 	var err error
-	db, err = sql.Open(driverName, dsn)
-	if err != nil {
-		return fmt.Errorf("failed to open database connection: %w", err)
+
+	// Check if the provided driverName is supported before opening the connection.
+	switch driverName {
+	case "mysql", "postgres", "sqlite3", "mssql":
+		// If a valid driver name is passed, open the connection
+		db, err = sql.Open(driverName, dsn)
+		if err != nil {
+			return fmt.Errorf("failed to open database connection: %w", err)
+		}
+	default:
+		return fmt.Errorf("unsupported driver %s", driverName)
 	}
 
 	if err = db.Ping(); err != nil {

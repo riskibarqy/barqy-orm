@@ -21,7 +21,13 @@ func Find(collection string, query interface{}, result interface{}) error {
 	if err != nil {
 		return fmt.Errorf("failed to find in MongoDB: %w", err)
 	}
-	defer cur.Close(ctx)
+	defer func() {
+		// Check if closing the cursor produces an error
+		if err := cur.Close(ctx); err != nil {
+			// Handle the close error if necessary
+			fmt.Printf("Failed to close cursor: %v\n", err)
+		}
+	}()
 	if err = cur.All(ctx, result); err != nil {
 		return fmt.Errorf("failed to read MongoDB results: %w", err)
 	}
